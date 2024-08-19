@@ -20,10 +20,10 @@ class MyWidget extends StatefulWidget {
   _MyWidgetState createState() => _MyWidgetState();
 }
 
-// Option 1: WillDisposeState<MyWidget>
-// Option 2: State<MyWidget> with DisposeMixin, WillDisposeMixin
+// Option 1: WillDisposeState<MyWidget>.
+// Option 2: State<MyWidget> with DisposeMixin, WillDisposeMixin.
 class _MyWidgetState extends WillDisposeState<MyWidget> {
-  // Define and mark resources for disposal on the same line
+  // Define and mark resources for disposal on the same line.
   late final _textController = willDispose(TextEditingController());
   late final _valueNotifier = willDispose(ValueNotifier('Initial Value'));
 
@@ -51,7 +51,7 @@ class _MyWidgetState extends WillDisposeState<MyWidget> {
 
   @override
   void dispose() {
-    // Resources marked with `willDispose` will be disposed automatically here
+    // Resources marked with `willDispose` will be disposed automatically here.
     super.dispose();
   }
 }

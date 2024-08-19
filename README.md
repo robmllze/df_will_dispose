@@ -18,15 +18,16 @@ A package to mark resources for disposal upon definition, simplifying your code.
 1. Use `WillDisposeState` instead of `State` for your widgets, or simply mix in `DisposeMixin` and `WillDisposeMixin` to your existing state classes.
 2. Define your resources using the `willDispose` function, which will automatically dispose of the resource when the widget is disposed.
 3. Only `ChangeNotifier` and `DisposeMixin` resources are supported at the moment.
-4. Common `ChangeNotifier` resources include `ValueNotifier` and most Flutter controllers.
+4. Common `ChangeNotifier` resources include `ValueNotifier`, `FocusNode`, most all Flutter controllers and [Pods](https://pub.dev/packages/df_pod).
+5. You can also create your own classes that implement `DisposeMixin`, enabling them to work seamlessly with `WillDisposeMixin`.
 
 ### Example:
 
 ```dart
-// Option 1: WillDisposeState<MyWidget>
-// Option 2: State<MyWidget> with DisposeMixin, WillDisposeMixin
+// Option 1: WillDisposeState<MyWidget>.
+// Option 2: State<MyWidget> with DisposeMixin, WillDisposeMixin.
 class _MyWidgetState extends WillDisposeState<MyWidget> {
-  // Define and mark resources for disposal on the same line
+  // Define and mark resources for disposal on the same line.
   late final _textController = willDispose(TextEditingController());
   late final _valueNotifier = willDispose(ValueNotifier('Initial Value'));
 
@@ -54,7 +55,7 @@ class _MyWidgetState extends WillDisposeState<MyWidget> {
 
   @override
   void dispose() {
-    // Resources marked with `willDispose` will be disposed automatically here
+    // Resources marked with `willDispose` will be disposed automatically here.
     super.dispose();
   }
 }
