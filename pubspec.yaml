@@ -12,6 +12,14 @@ name: df_will_dispose
 description: A package to mark resources for disposal upon definition, simplifying your code.
 version: 0.1.0
 repository: https://github.com/robmllze/df_will_dispose
+funding:
+  - https://www.buymeacoffee.com/robmllze
+topics:
+  - dispose
+  - reactive
+  - state
+  - state-management
+  - widget
 
 ## -----------------------------------------------------------------------------
 
