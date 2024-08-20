@@ -9,6 +9,7 @@
 //.title~
 
 import 'package:df_will_dispose/df_will_dispose.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -20,12 +21,12 @@ class Example1 extends StatefulWidget {
   _Example1State createState() => _Example1State();
 }
 
-// Option 1: WillDisposeState<MyWidget>.
-// Option 2: State<MyWidget> with DisposeMixin, WillDisposeMixin.
+// Option 1: WillDisposeState<Example1>.
+// Option 2: State<Example1> with DisposeMixin, WillDisposeMixin.
 class _Example1State extends WillDisposeState<Example1> {
   // Define resources and schedule them to be disposed when this widget gets
   // removed from the widget tree.
-  late final _textController = willDispose(TextEditingController());
+  late final _textEditingController = willDispose(TextEditingController());
   late final _valueNotifier = willDispose(ValueNotifier('Initial Value'));
 
   @override
@@ -34,7 +35,7 @@ class _Example1State extends WillDisposeState<Example1> {
       appBar: AppBar(title: const Text('WillDispose Example')),
       body: Column(
         children: [
-          TextField(controller: _textController),
+          TextField(controller: _textEditingController),
           ValueListenableBuilder<String>(
             valueListenable: _valueNotifier,
             builder: (context, value, child) => Text('Value: $value'),
@@ -62,17 +63,26 @@ class _Example1State extends WillDisposeState<Example1> {
 class Example2 extends WillDisposeWidget {
   const Example2({super.key});
 
+  /// Override this method if you need to customize the disposal behavior.
+  @override
+  void onDispose(WillDispose willDispose) {
+    if (kDebugMode) {
+      print('${willDispose.resources.length} resources are about to be disposed!');
+    }
+    willDispose.dispose();
+  }
+
   @override
   Widget build(BuildContext context, WillDispose willDispose) {
     // Define resources and schedule them to be disposed when this widget gets
     // removed from the widget tree.
-    final textController = willDispose(TextEditingController());
+    final textEditingController = willDispose(TextEditingController());
     final focusNode = willDispose(FocusNode());
 
     return Column(
       children: [
         TextField(
-          controller: textController,
+          controller: textEditingController,
           focusNode: focusNode,
         ),
       ],

@@ -45,6 +45,7 @@ import '_index.g.dart';
 abstract class WillDisposeWidget extends StatefulWidget {
   const WillDisposeWidget({super.key});
 
+  @protected
   @override
   _WillDisposeWidgetState createState() => _WillDisposeWidgetState();
 
@@ -53,11 +54,17 @@ abstract class WillDisposeWidget extends StatefulWidget {
   /// marked for disposal within the build method.
   @protected
   Widget build(BuildContext context, WillDispose willDispose);
+
+  /// Override this method if you need to customize the disposal behavior.
+  @protected
+  void onDispose(WillDispose willDispose) {
+    willDispose.dispose();
+  }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class _WillDisposeWidgetState extends State<WillDisposeWidget> {
+class _WillDisposeWidgetState extends State<WillDisposeWidget> with DisposeMixin {
   WillDispose? _willDispose;
 
   @override
@@ -74,7 +81,7 @@ class _WillDisposeWidgetState extends State<WillDisposeWidget> {
   void dispose() {
     // Ensure all resources marked for disposal are cleaned up when the widget
     // is removed from the widget tree.
-    _willDispose?.dispose();
+    widget.onDispose(_willDispose!);
     super.dispose();
   }
 }

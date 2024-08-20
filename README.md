@@ -1,4 +1,4 @@
-# DF Will Dispose
+# DF - Will Dispose
 
 <a href="https://www.buymeacoffee.com/robmllze" target="_blank"><img align="right" src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
@@ -18,22 +18,24 @@ This package offers a lightweight approach to managing resource disposal in Flut
 
 ## Quickstart
 
-0. Use this package as a dependency by adding it to your `pubspec.yaml` file (see [here](https://pub.dev/packages/df_will_dispose/install)).
-1. For stateful widgets, use `WillDisposeState` instead of `State`, or simply mix in `DisposeMixin` and `WillDisposeMixin` to your existing state classes.
-2. For widgets that behave like stateless widgets but need to manage disposable resources, extend `WillDisposeWidget`.
-3. Define your resources using the `willDispose` function, which will automatically dispose of the resource when the widget is disposed.
-4. Use the `willDispose` function to define your resources. This ensures they are disposed of automatically when the widget is removed from the widget tree.
-5. Any resource with a `dispose()` method can be managed. If a resource does not have a `dispose()` method, `NoDisposeMethodDebugError` will be thrown during disposal.
-6. Common disposable resources include `ChangeNotifier`, `ValueNotifier`, `FocusNode`, most Flutter controllers and [Pods](https://pub.dev/packages/df_pod).
-7. You can also create your own classes that implement `DisposeMixin`, enabling them to work seamlessly with `WillDisposeMixin`.
+1. Use this package as a dependency by adding it to your `pubspec.yaml` file (see [here](https://pub.dev/packages/df_will_dispose/install)).
+2. For stateful widgets, use `WillDisposeState` instead of `State`, or simply mix in `DisposeMixin` and `WillDisposeMixin` to your existing state classes.
+3. For widgets that behave like stateless widgets but need to manage disposable resources, extend `WillDisposeWidget`.
+4. Define your resources using the `willDispose` function, which will automatically dispose of the resource when the widget is disposed.
+5. Use the `willDispose` function to define your resources. This ensures they are disposed of automatically when the widget is removed from the widget tree.
+6. Any resource with a `dispose()` method can be managed. If a resource does not have a `dispose()` method, `NoDisposeMethodDebugError` will be thrown during disposal.
+7. Common disposable resources include `ChangeNotifier`, `ValueNotifier`, `FocusNode`, most Flutter controllers and [Pods](https://pub.dev/packages/df_pod).
+8. You can also create your own classes that implement `DisposeMixin`, enabling them to work seamlessly with `WillDisposeMixin`.
 
 ### Example 1 - StatefulWidget:
 
+`DisposeMixin` and `WillDisposeMixin` can be used with a `StatefulWidget` to manage disposable resources effectively. You can also simplify this by using `WillDisposeState` instead of `State`. By utilizing these mixins, you can easily mark resources like `TextEditingController` and `ValueNotifier` for disposal when the widget is removed from the widget tree. This approach ensures that all resources are properly disposed of without requiring manual cleanup, simplifying resource management in your stateful widgets.
+
 ```dart
-class _Example1State extends WillDisposeState<Example1> {
+class _Example1State extends State<Example1> with DisposeMixin, WillDisposeMixin {
   // Define resources and schedule them to be disposed when this widget gets
   // removed from the widget tree.
-  late final _textController = willDispose(TextEditingController());
+  late final _textEditingController = willDispose(TextEditingController());
   late final _valueNotifier = willDispose(ValueNotifier('Initial Value'));
 
   @override
@@ -42,7 +44,7 @@ class _Example1State extends WillDisposeState<Example1> {
       appBar: AppBar(title: const Text('WillDispose Example')),
       body: Column(
         children: [
-          TextField(controller: _textController),
+          TextField(controller: _textEditingController),
           ValueListenableBuilder<String>(
             valueListenable: _valueNotifier,
             builder: (context, value, child) => Text('Value: $value'),
@@ -68,9 +70,18 @@ class _Example1State extends WillDisposeState<Example1> {
 
 ### Example 2 - WillDisposeWidget:
 
+`WillDisposeWidget` is a specialized widget that combines the simplicity of a `StatelessWidget` with the resource management capabilities of a `StatefulWidget`. It's designed to automatically manage and dispose of resources like `TextEditingController`, `FocusNode`, or other disposable objects when the widget is removed or rebuilt. Ideal for small, self-contained components, `WillDisposeWidget` typically won’t rebuild unless externally triggered, but when it does, it ensures all resources are properly disposed of and recreated, providing a seamless reset. While useful for managing disposable resources efficiently in small widgets, a traditional stateful approach might be better suited for more complex widgets requiring extensive state handling.
+
 ```dart
 class Example2 extends WillDisposeWidget {
   const Example2({super.key});
+
+  /// Override this method if you need to customize the disposal behavior.
+  @override
+  void onDispose(WillDispose willDispose) {
+    print('${willDispose.resources.length} resources are about to be disposed!');
+    willDispose.dispose();
+  }
 
   @override
   Widget build(BuildContext context, WillDispose willDispose) {

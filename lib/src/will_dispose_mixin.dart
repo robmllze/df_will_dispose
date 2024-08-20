@@ -8,8 +8,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:flutter/foundation.dart'
-    show VoidCallback, kDebugMode, mustCallSuper, nonVirtual;
+import 'package:flutter/foundation.dart' show VoidCallback, kDebugMode, mustCallSuper, nonVirtual;
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -29,7 +28,9 @@ import 'package:flutter/foundation.dart'
 mixin WillDisposeMixin on DisposeMixin {
   /// A list of resources that will be manually marked for disposal when
   /// [dispose] is called.
-  final List<_Disposable> _disposables = [];
+  List<DisposableResource> get resources => List.unmodifiable(_resources);
+
+  final List<DisposableResource> _resources = [];
 
   /// Marks a resource for disposal. This method allows you to define and
   /// mark a resource for disposal on the same line, simplifying the code.
@@ -57,7 +58,7 @@ mixin WillDisposeMixin on DisposeMixin {
       resource: resource,
       onBeforeDispose: onBeforeDispose,
     );
-    _disposables.add(disposable);
+    _resources.add(disposable);
 
     return resource;
   }
@@ -67,7 +68,7 @@ mixin WillDisposeMixin on DisposeMixin {
   @override
   void dispose() {
     final exceptions = <Object>[];
-    for (final disposable in _disposables) {
+    for (final disposable in _resources) {
       final resource = disposable.resource;
       try {
         // Ensure the resource has a dispose method; throw an error if not.
@@ -109,8 +110,7 @@ mixin WillDisposeMixin on DisposeMixin {
       // Only throw NoDisposeMethodDebugError in debug mode. Ignore them in
       // release.
       if (kDebugMode) {
-        final disposeErrors =
-            exceptions.whereType<NoDisposeMethodDebugError>().toList();
+        final disposeErrors = exceptions.whereType<NoDisposeMethodDebugError>().toList();
         if (disposeErrors.isNotEmpty) {
           throw NoDisposeMethodDebugError(
             disposeErrors.map((e) => e.runtimeType).toList(),
@@ -118,8 +118,7 @@ mixin WillDisposeMixin on DisposeMixin {
         }
       }
       // Throw the first non-NoDisposeMethodDebugError exception if any exist.
-      final otherExceptions =
-          exceptions.where((e) => e is! NoDisposeMethodDebugError).toList();
+      final otherExceptions = exceptions.where((e) => e is! NoDisposeMethodDebugError).toList();
       if (otherExceptions.isNotEmpty) {
         throw otherExceptions.first;
       }
@@ -129,7 +128,7 @@ mixin WillDisposeMixin on DisposeMixin {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef _Disposable = ({
+typedef DisposableResource = ({
   dynamic resource,
   VoidCallback? onBeforeDispose,
 });
