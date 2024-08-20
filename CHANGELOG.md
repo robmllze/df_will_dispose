@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.3]
+
+- Released @ 8/2024 (UTC)
+- refactor: rename _DisposeMixin class to _Dispose
+
 ## [0.3.2+1]
 
 - Released @ 8/2024 (UTC)
