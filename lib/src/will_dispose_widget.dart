@@ -84,7 +84,7 @@ class _WillDisposeWidgetState extends State<WillDisposeWidget> {
 /// A basic mixin that provides a no-op [dispose] method.  This class can be
 /// extended or mixed in when a class needs to implement DisposeMixin but
 /// doesn't have any resources to dispose.
-class _DisposeMixin with DisposeMixin {
+class _Dispose with DisposeMixin {
   @override
   void dispose() {}
 }
@@ -96,7 +96,7 @@ class _DisposeMixin with DisposeMixin {
 /// disposed of when the widget is removed from the tree.
 ///
 /// This class is typically used in conjunction with [WillDisposeWidget].
-class WillDispose extends _DisposeMixin with WillDisposeMixin {
+class WillDispose extends _Dispose with WillDisposeMixin {
   WillDispose._();
 
   /// Marks a resource for disposal. This method allows the resource to be
