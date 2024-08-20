@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.1+1]
+
+- Released @ 8/2024 (UTC)
+- docs: Fix typo in readme
+
 ## [0.3.1]
 
 - Released @ 8/2024 (UTC)
