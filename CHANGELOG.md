@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.2]
+
+- Released @ 8/2024 (UTC)
+- chore: Improve disposal process in WillDisposeMixin
+
 ## [0.3.1+1]
 
 - Released @ 8/2024 (UTC)
