@@ -27,10 +27,12 @@ class TimerWithCounterExample extends StatefulWidget {
   const TimerWithCounterExample({super.key});
 
   @override
-  _TimerWithCounterExampleState createState() => _TimerWithCounterExampleState();
+  _TimerWithCounterExampleState createState() =>
+      _TimerWithCounterExampleState();
 }
 
-class _TimerWithCounterExampleState extends WillDisposeState<TimerWithCounterExample> {
+class _TimerWithCounterExampleState
+    extends WillDisposeState<TimerWithCounterExample> {
   // Define resources and schedule them to be disposed when this widget ia
   // removed from the widget tree.
   late final _secondsRemaining = willDispose(ValueNotifier<int>(60));
@@ -137,7 +139,8 @@ class FormExample extends WillDisposeWidget {
   @override
   void onDispose(WillDispose willDispose) {
     if (kDebugMode) {
-      print('${willDispose.resources.length} resources are about to be disposed!');
+      print(
+          '${willDispose.resources.length} resources are about to be disposed!',);
     }
     willDispose.dispose();
   }
