@@ -10,7 +10,7 @@
 
 name: df_will_dispose
 description: A lightweight package to mark resources for disposal upon definition, simplifying your code.
-version: 0.3.1+1
+version: 0.3.2
 repository: https://github.com/robmllze/df_will_dispose
 funding:
   - https://www.buymeacoffee.com/robmllze

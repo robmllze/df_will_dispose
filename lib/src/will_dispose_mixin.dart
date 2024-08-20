@@ -8,8 +8,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:flutter/foundation.dart'
-    show VoidCallback, mustCallSuper, nonVirtual;
+import 'package:flutter/foundation.dart' show VoidCallback, kDebugMode, mustCallSuper, nonVirtual;
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -66,21 +65,60 @@ mixin WillDisposeMixin on DisposeMixin {
   @mustCallSuper
   @override
   void dispose() {
+    final exceptions = <Object>[];
     for (final disposable in _disposables) {
-      disposable.onBeforeDispose?.call();
       final resource = disposable.resource;
       try {
-        resource.dispose();
-      } on NoSuchMethodError catch (_) {
-        // If the resource lacks a dispose method, trigger an assertion in debug
-        // mode to catch the issue. In release mode, the error is ignored,
-        // allowing the loop to continue disposing of other resources.
-        assert(false, () {
-          throw NoDisposeMethodDebugError(resource.runtimeType);
-        });
+        // Ensure the resource has a dispose method; throw an error if not.
+        late VoidCallback dispose;
+        try {
+          dispose = resource.dispose as VoidCallback;
+        } on NoSuchMethodError {
+          throw NoDisposeMethodDebugError([resource.runtimeType]);
+        }
+
+        // Attempt to call onBeforeDispose, catching and copying any errors.
+        Object? onBeforeDisposeError;
+        try {
+          disposable.onBeforeDispose?.call();
+        } catch (e) {
+          onBeforeDisposeError = e;
+        }
+
+        // Always dispose of the resource, even if onBeforeDispose throws an
+        // error.
+        dispose();
+
+        // After successful disposal, rethrow any error from onBeforeDispose.
+        if (onBeforeDisposeError != null) {
+          throw onBeforeDisposeError;
+        }
+      } catch (e) {
+        // Collect exceptions to throw them all at the end, ensuring disposal
+        // of all resources.
+        exceptions.add(e);
       }
     }
+
+    // Call the parent class's dispose method.
     super.dispose();
+
+    // Throw any collected exceptions after disposal is complete.
+    if (exceptions.isNotEmpty) {
+      // Only throw NoDisposeMethodDebugError in debug mode. Ignore them in
+      // release.
+      if (kDebugMode) {
+        final disposeErrors = exceptions.whereType<NoDisposeMethodDebugError>().toList();
+        if (disposeErrors.isNotEmpty) {
+          throw NoDisposeMethodDebugError(disposeErrors.map((e) => e.runtimeType).toList());
+        }
+      }
+      // Throw the first non-NoDisposeMethodDebugError exception if any exist.
+      final otherExceptions = exceptions.where((e) => e is! NoDisposeMethodDebugError).toList();
+      if (otherExceptions.isNotEmpty) {
+        throw otherExceptions.first;
+      }
+    }
   }
 }
 
@@ -99,13 +137,13 @@ typedef _Disposable = ({
 /// Informs the developer that the resource type cannot be properly disposed of
 /// using `willDispose()`.
 final class NoDisposeMethodDebugError extends Error {
-  final Type resourceType;
+  final Iterable<Type> resourceTypes;
 
-  NoDisposeMethodDebugError(this.resourceType);
+  NoDisposeMethodDebugError(this.resourceTypes);
 
   @override
   String toString() {
-    return 'NoDisposeMethodDebugError: The type $resourceType does not implement a dispose() method. '
+    return 'NoDisposeMethodDebugError: The types $resourceTypes do not implement a dispose() method. '
         "Either don't use willDispose() with this type, implement DisposeMixin, "
         'or use a valid type that has a dispose method.';
   }
