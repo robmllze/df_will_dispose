@@ -64,7 +64,8 @@ abstract class WillDisposeWidget extends StatefulWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class _WillDisposeWidgetState extends State<WillDisposeWidget> with DisposeMixin {
+class _WillDisposeWidgetState extends State<WillDisposeWidget>
+    with DisposeMixin {
   WillDispose? _willDispose;
 
   @override

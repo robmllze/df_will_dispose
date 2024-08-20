@@ -67,7 +67,8 @@ class Example2 extends WillDisposeWidget {
   @override
   void onDispose(WillDispose willDispose) {
     if (kDebugMode) {
-      print('${willDispose.resources.length} resources are about to be disposed!');
+      print(
+          '${willDispose.resources.length} resources are about to be disposed!',);
     }
     willDispose.dispose();
   }

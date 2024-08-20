@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.0]
+
+- Released @ 8/2024 (UTC)
+- feat: Add onDispose method to WillDisposeWidget if you need to customize the disposal behavior, add a resource getter to WillDisposeMixin
+
 ## [0.3.3]
 
 - Released @ 8/2024 (UTC)
