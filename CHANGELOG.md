@@ -4,6 +4,7 @@
 
 - Released @ 8/2024 (UTC)
 - docs: Fix typo in readme
+- chore: Update topics in pubspec.yaml
 
 ## [0.3.1]
 
