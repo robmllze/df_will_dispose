@@ -140,7 +140,8 @@ class FormExample extends WillDisposeWidget {
   void onDispose(WillDispose willDispose) {
     if (kDebugMode) {
       print(
-          '${willDispose.resources.length} resources are about to be disposed!',);
+        '${willDispose.resources.length} resources are about to be disposed!',
+      );
     }
     willDispose.dispose();
   }

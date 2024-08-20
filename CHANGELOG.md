@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.1]
+
+- Released @ 8/2024 (UTC)
+- fix: Fix redundancy issue with simpler_will_dispose_mixin.dart
+
 ## [0.4.0+1]
 
 - Released @ 8/2024 (UTC)

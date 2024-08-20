@@ -21,7 +21,8 @@ mixin WillDisposeMixin on DisposeMixin {
         resource.dispose(); // Call the dispose method.
       } on NoSuchMethodError {
         assert(false, () {
-          throw NoDisposeMethodDebugError(resource.runtimeType); // Handle missing dispose method.
+          throw NoDisposeMethodDebugError(
+              resource.runtimeType,); // Handle missing dispose method.
         });
       }
     }
