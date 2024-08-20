@@ -2,7 +2,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
 // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
-// source code is governed by an MIT-style license that can be found in the
+// source code is governed by an open-use license that can be found in the
 // LICENSE file located in this project's root directory.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -14,16 +14,43 @@ import '_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A widget that simplifies the disposal of resources that implement
-/// either [ChangeNotifier] or [DisposeMixin]. This allows you to easily
-/// mark resources for disposal within the [build] function via [WillDispose].
-@visibleForTesting
+/// An abstract [Widget] that simplifies managing resources that require
+/// disposal. This widget provides a [WillDispose] instance to handle disposing
+/// resources automatically.
+/// ---
+/// ### Example:
+/// ```dart
+/// class MyWidget extends WillDisposeWidget {
+///   const MyWidget({super.key});
+///
+///   @override
+///   Widget build(BuildContext context, WillDispose willDispose) {
+///     // Mark resources for disposal when defining them.
+///     final textController = willDispose(TextEditingController());
+///     final focusNode = willDispose(FocusNode());
+///
+///     return Column(
+///       children: [
+///         TextField(controller: textController, focusNode: focusNode),
+///         // Other widgets...
+///       ],
+///     );
+///   }
+/// }
+/// ```
+///
+/// In this example, `TextEditingController` and `FocusNode` are marked for
+/// disposal using the `willDispose` method. They will be automatically disposed
+/// of when the widget is removed from the widget tree.
 abstract class WillDisposeWidget extends StatefulWidget {
   const WillDisposeWidget({super.key});
 
   @override
   _WillDisposeWidgetState createState() => _WillDisposeWidgetState();
 
+  /// This method must be implemented by subclasses to build the widget's UI.
+  /// It provides a [WillDispose] instance, allowing resources to be easily
+  /// marked for disposal within the build method.
   @protected
   Widget build(BuildContext context, WillDispose willDispose);
 }
@@ -31,22 +58,32 @@ abstract class WillDisposeWidget extends StatefulWidget {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 class _WillDisposeWidgetState extends State<WillDisposeWidget> {
-  final _willDispose = WillDispose._();
+  WillDispose? _willDispose;
 
   @override
   Widget build(BuildContext context) {
-    return widget.build(context, _willDispose);
+    // Dispose the previous WillDispose instance before creating a new one.
+    // This ensures that any resources associated with the previous state are
+    // properly cleaned up before rebuilding the widget.
+    _willDispose?.dispose();
+    _willDispose = WillDispose._();
+    return widget.build(context, _willDispose!);
   }
 
   @override
   void dispose() {
-    _willDispose.dispose();
+    // Ensure all resources marked for disposal are cleaned up when the widget
+    // is removed from the widget tree.
+    _willDispose?.dispose();
     super.dispose();
   }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
+/// A basic mixin that provides a no-op [dispose] method.  This class can be
+/// extended or mixed in when a class needs to implement DisposeMixin but
+/// doesn't have any resources to dispose.
 class _DisposeMixin with DisposeMixin {
   @override
   void dispose() {}
@@ -54,29 +91,22 @@ class _DisposeMixin with DisposeMixin {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// The [WillDispose] class manages disposable resources within a widget.
+/// The [WillDispose] class is used to manage the lifecycle of disposable
+/// resources within a widget. It ensures that all resources are properly
+/// disposed of when the widget is removed from the tree.
+///
+/// This class is typically used in conjunction with [WillDisposeWidget].
 class WillDispose extends _DisposeMixin with WillDisposeMixin {
   WillDispose._();
 
-  /// Marks a resource for disposal. This method allows you to define and
-  /// mark a resource for disposal on the same line, simplifying the code.
+  /// Marks a resource for disposal. This method allows the resource to be
+  /// managed by the [WillDispose] instance, ensuring it is disposed of
+  /// automatically when the widget is disposed.
   ///
-  /// Only resources that implement [ChangeNotifier] or [DisposeMixin] are
-  /// supported. If the resource does not implement one of these interfaces,
-  /// an assert will trigger indicating the misuse.
-  ///
-  /// You can optionally provide an [onBeforeDispose] callback that will be
-  /// invoked just before the resource is disposed of.
+  /// The [onBeforeDispose] callback, if provided, will be invoked just
+  /// before the resource is disposed of.
   ///
   /// Returns the resource back to allow for easy chaining or assignment.
-  ///
-  /// ---
-  /// ### Example:
-  /// ```dart
-  /// Widget build(BuildContext context, WillDispose willDispose) {
-  ///   final _controller = willDispose(TextEditingController());
-  /// }
-  /// ```
   T call<T>(T resource, {void Function()? onBeforeDispose}) {
     return willDispose(resource, onBeforeDispose: onBeforeDispose);
   }

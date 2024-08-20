@@ -2,7 +2,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
 // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
-// source code is governed by an MIT-style license that can be found in the
+// source code is governed by an open-use license that can be found in the
 // LICENSE file located in this project's root directory.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -13,17 +13,18 @@ import 'package:flutter/material.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
+class Example1 extends StatefulWidget {
+  const Example1({super.key});
 
   @override
-  _MyWidgetState createState() => _MyWidgetState();
+  _Example1State createState() => _Example1State();
 }
 
 // Option 1: WillDisposeState<MyWidget>.
 // Option 2: State<MyWidget> with DisposeMixin, WillDisposeMixin.
-class _MyWidgetState extends WillDisposeState<MyWidget> {
-  // Define and mark resources for disposal on the same line.
+class _Example1State extends WillDisposeState<Example1> {
+  // Define resources and schedule them to be disposed when this widget gets
+  // removed from the widget tree.
   late final _textController = willDispose(TextEditingController());
   late final _valueNotifier = willDispose(ValueNotifier('Initial Value'));
 
@@ -56,4 +57,27 @@ class _MyWidgetState extends WillDisposeState<MyWidget> {
   }
 }
 
-void main() => runApp(const MaterialApp(home: MyWidget()));
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+class Example2 extends WillDisposeWidget {
+  const Example2({super.key});
+
+  @override
+  Widget build(BuildContext context, WillDispose willDispose) {
+    // Define resources and schedule them to be disposed when this widget gets
+    // removed from the widget tree.
+    final textController = willDispose(TextEditingController());
+    final focusNode = willDispose(FocusNode());
+
+    return Column(
+      children: [
+        TextField(
+          controller: textController,
+          focusNode: focusNode,
+        ),
+      ],
+    );
+  }
+}
+
+void main() => runApp(const MaterialApp(home: Example1()));

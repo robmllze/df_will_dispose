@@ -2,15 +2,13 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
 // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
-// source code is governed by an MIT-style license that can be found in the
+// source code is governed by an open-use license that can be found in the
 // LICENSE file located in this project's root directory.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:flutter/foundation.dart';
-
-import 'dispose_mixin.dart';
+import 'package:flutter/foundation.dart' show VoidCallback, mustCallSuper, nonVirtual;
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -22,7 +20,6 @@ import 'dispose_mixin.dart';
 /// The resources marked with [willDispose] will be disposed of when the
 /// [dispose] method is called, but the marking itself is not automatic.
 /// You still need to explicitly call [willDispose] on each resource.
-///
 /// ---
 /// ### Example:
 /// ```dart
@@ -36,9 +33,10 @@ mixin WillDisposeMixin on DisposeMixin {
   /// Marks a resource for disposal. This method allows you to define and
   /// mark a resource for disposal on the same line, simplifying the code.
   ///
-  /// Only resources that implement [ChangeNotifier] or [DisposeMixin] are
-  /// supported. If the resource does not implement one of these interfaces,
-  /// an assert will trigger indicating the misuse.
+  /// Only resources that implement `dispose()` are supported, such as
+  /// [ChangeNotifier], [DisposeMixin] and more. If the resource does not
+  /// implement one of these interfaces, a [NoDisposeMethodDebugError] will be
+  /// thrown during disposal.
   ///
   /// You can optionally provide an [onBeforeDispose] callback that will be
   /// invoked just before the resource is disposed of.
@@ -54,15 +52,12 @@ mixin WillDisposeMixin on DisposeMixin {
   /// ```
   @nonVirtual
   T willDispose<T>(T resource, {void Function()? onBeforeDispose}) {
-    final disposable = _isDisposable(resource);
-    assert(
-      disposable,
-      'Invalid argument: autoDispose() was called with an instance of ${resource.runtimeType}. '
-      'Only instances of ChangeNotifier or DisposeMixin are supported.',
+    final disposable = (
+      resource: resource,
+      onBeforeDispose: onBeforeDispose,
     );
-    if (disposable) {
-      _disposables.add(_Disposable(resource, onBeforeDispose));
-    }
+    _disposables.add(disposable);
+
     return resource;
   }
 
@@ -71,35 +66,54 @@ mixin WillDisposeMixin on DisposeMixin {
   @override
   void dispose() {
     for (final disposable in _disposables) {
-      final res = disposable.resource;
-      if (res is ChangeNotifier) {
-        res.dispose();
+      disposable.onBeforeDispose?.call();
+      final resource = disposable.resource;
+      try {
+        resource.dispose();
+      } on NoSuchMethodError catch (_) {
+        // If the resource lacks a dispose method, trigger an assertion in debug
+        // mode to catch the issue. In release mode, the error is ignored,
+        // allowing the loop to continue disposing of other resources.
+        assert(false, () {
+          throw NoDisposeMethodDebugError(resource.runtimeType);
+        });
       }
-      if (res is DisposeMixin) {
-        res.dispose();
-      }
-
-      disposable.onDispose?.call();
     }
     super.dispose();
-  }
-
-  /// Checks if a resource is disposable by verifying if it implements either
-  /// [ChangeNotifier] or [DisposeMixin].
-  ///
-  /// Returns `true` if the resource can be disposed of using this mixin,
-  /// `false` otherwise.
-  bool _isDisposable(dynamic resource) {
-    return resource is ChangeNotifier || resource is DisposeMixin;
   }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A helper class that stores a resource and an optional `onDispose` callback.
-class _Disposable {
-  final dynamic resource;
-  final void Function()? onDispose;
+typedef _Disposable = ({
+  dynamic resource,
+  VoidCallback? onBeforeDispose,
+});
 
-  _Disposable(this.resource, this.onDispose);
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+/// An [Error] thrown when a type without a `dispose` method is passed to
+/// `willDispose()`.
+///
+/// Informs the developer that the resource type cannot be properly disposed of
+/// using `willDispose()`.
+final class NoDisposeMethodDebugError extends Error {
+  final Type resourceType;
+
+  NoDisposeMethodDebugError(this.resourceType);
+
+  @override
+  String toString() {
+    return 'NoDisposeMethodDebugError: The type $resourceType does not implement a dispose() method. '
+        "Either don't use willDispose() with this type, implement DisposeMixin, "
+        'or use a valid type that has a dispose method.';
+  }
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+/// A mixin that adds a [dispose] method to a class.
+mixin DisposeMixin {
+  /// Override to manage the disposal of resources.
+  void dispose();
 }

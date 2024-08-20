@@ -1,4 +1,4 @@
-# DF Will Dispose
+# DF WillDispose
 
 <a href="https://www.buymeacoffee.com/robmllze" target="_blank"><img align="right" src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
@@ -11,23 +11,27 @@ Dart & Flutter Packages by DevCetra.com & contributors.
 
 ## Summary
 
-A package to mark resources for disposal upon definition, simplifying your code. For a full feature set, please refer to the [API reference](https://pub.dev/documentation/df_will_dispose/).
+Theis package offers a lightweight approach to managing resource disposal in Flutter, providing an alternative to hooks. It's designed to simplify your code by marking resources for disposal upon definition. Additionally, if you prefer to avoid adding extra dependencies, the mixins used in this package are so short and simple that you can easily copy them directly into your project. The package is under an open-use license, so you can freely use and modify the mixins without needing to include the license file.
+
+[View and copy the mixins here.](https://github.com/robmllze/df_will_dispose/blob/main/lib/src/will_dispose_mixin.dart).
 
 ## Quickstart
 
-1. Use `WillDisposeState` instead of `State` for your widgets, or simply mix in `DisposeMixin` and `WillDisposeMixin` to your existing state classes.
-2. Define your resources using the `willDispose` function, which will automatically dispose of the resource when the widget is disposed.
-3. Only `ChangeNotifier` and `DisposeMixin` resources are supported at the moment.
-4. Common `ChangeNotifier` resources include `ValueNotifier`, `FocusNode`, most all Flutter controllers and [Pods](https://pub.dev/packages/df_pod).
-5. You can also create your own classes that implement `DisposeMixin`, enabling them to work seamlessly with `WillDisposeMixin`.
+0. Use this package as a dependency by adding it to your `pubspec.yaml` file (see [here](https://pub.dev/packages/df_will_dispose/install)).
+1. For stateful widgets, use `WillDisposeState` instead of `State`, or simply mix in `DisposeMixin` and `WillDisposeMixin` to your existing state classes.
+2. For widgets that behave like stateless widgets but need to manage disposable resources, extend `WillDisposeWidget`.
+3. Define your resources using the `willDispose` function, which will automatically dispose of the resource when the widget is disposed.
+4. Use the `willDispose` function to define your resources. This ensures they are disposed of automatically when the widget is removed from the widget tree.
+5. Any resource with a `dispose()` method can be managed. If a resource does not have a `dispose()` method, `NoDisposeMethodDebugError` will be thrown during disposal.
+6. Common disposable resources include `ChangeNotifier`, `ValueNotifier`, `FocusNode`, most Flutter controllers and [Pods](https://pub.dev/packages/df_pod).
+7. You can also create your own classes that implement `DisposeMixin`, enabling them to work seamlessly with `WillDisposeMixin`.
 
-### Example:
+### Example 1 - StatefulWidget:
 
 ```dart
-// Option 1: WillDisposeState<MyWidget>.
-// Option 2: State<MyWidget> with DisposeMixin, WillDisposeMixin.
-class _MyWidgetState extends WillDisposeState<MyWidget> {
-  // Define and mark resources for disposal on the same line.
+class _Example1State extends WillDisposeState<Example1> {
+  // Define resources and schedule them to be disposed when this widget gets
+  // removed from the widget tree.
   late final _textController = willDispose(TextEditingController());
   late final _valueNotifier = willDispose(ValueNotifier('Initial Value'));
 
@@ -61,9 +65,30 @@ class _MyWidgetState extends WillDisposeState<MyWidget> {
 }
 ```
 
-## Installation
+### Example 2 - WillDisposeWidget:
 
-Use this package as a dependency by adding it to your `pubspec.yaml` file (see [here](https://pub.dev/packages/df_will_dispose/install)).
+```dart
+class Example2 extends WillDisposeWidget {
+  const Example2({super.key});
+
+  @override
+  Widget build(BuildContext context, WillDispose willDispose) {
+    // Define resources and schedule them to be disposed when this widget gets
+    // removed from the widget tree.
+    final textController = willDispose(TextEditingController());
+    final focusNode = willDispose(FocusNode());
+
+    return Column(
+      children: [
+        TextField(
+          controller: textController,
+          focusNode: focusNode,
+        ),
+      ],
+    );
+  }
+}
+```
 
 ---
 
@@ -98,4 +123,4 @@ https://www.buymeacoffee.com/robmllze
 
 ## License
 
-This project is released under the MIT License. See [LICENSE](https://raw.githubusercontent.com/robmllze/df_will_dispose/main/LICENSE) for more information.
+This project is released under an Open Use License. See [LICENSE](https://raw.githubusercontent.com/robmllze/df_will_dispose/main/LICENSE) for more information.

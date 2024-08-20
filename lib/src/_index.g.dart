@@ -9,7 +9,6 @@
 
 // --- PUBLIC FILES ---
 export 'will_dispose_mixin.dart';
-export 'dispose_mixin.dart';
 export 'will_dispose_widget.dart';
 export 'will_dispose_state.dart';
 
