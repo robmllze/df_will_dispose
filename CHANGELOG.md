@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.2+1]
+
+- Released @ 8/2024 (UTC)
+- docs: Update readme and license
+
 ## [0.3.2]
 
 - Released @ 8/2024 (UTC)
