@@ -2,8 +2,7 @@
 // extensive comments removed for simplicity. Feel free to copy, modify, and
 // include it in your code as needed.
 
-import 'package:flutter/foundation.dart'
-    show VoidCallback, kDebugMode, mustCallSuper, nonVirtual;
+import 'package:flutter/foundation.dart' show VoidCallback, kDebugMode, mustCallSuper, nonVirtual;
 
 mixin SimpleWillDisposeMixin on DisposeMixin {
   final List<dynamic> _resources = []; // List to keep track of resources.
@@ -20,8 +19,7 @@ mixin SimpleWillDisposeMixin on DisposeMixin {
     final exceptions = <Object>[]; // List to collect any exceptions.
     for (final resource in _resources) {
       try {
-        final dispose = resource.dispose
-            as VoidCallback; // Ensure resource has dispose method.
+        final dispose = resource.dispose as VoidCallback; // Ensure resource has dispose method.
         dispose(); // Call the dispose method.
       } on NoSuchMethodError {
         assert(false, () {
@@ -38,8 +36,7 @@ mixin SimpleWillDisposeMixin on DisposeMixin {
 
     if (exceptions.isNotEmpty) {
       if (kDebugMode) {
-        final disposeErrors =
-            exceptions.whereType<NoDisposeMethodDebugError>().toList();
+        final disposeErrors = exceptions.whereType<NoDisposeMethodDebugError>().toList();
         if (disposeErrors.isNotEmpty) {
           throw NoDisposeMethodDebugError(
             disposeErrors.map((e) => e.runtimeType).toList(),
@@ -47,8 +44,7 @@ mixin SimpleWillDisposeMixin on DisposeMixin {
         }
       }
 
-      final otherExceptions =
-          exceptions.where((e) => e is! NoDisposeMethodDebugError).toList();
+      final otherExceptions = exceptions.where((e) => e is! NoDisposeMethodDebugError).toList();
       if (otherExceptions.isNotEmpty) {
         throw otherExceptions.first; // Throw the first exception if any.
       }

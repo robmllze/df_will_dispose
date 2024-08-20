@@ -128,4 +128,4 @@ https://www.buymeacoffee.com/robmllze
 
 ## License
 
-This project is released under an Open Use License. See [LICENSE](https://raw.githubusercontent.com/robmllze/df_will_dispose/main/LICENSE) for more information.
+This project is released under the MIT License. See [LICENSE](https://raw.githubusercontent.com/robmllze/df_bulk_replace/main/LICENSE) for more information.
