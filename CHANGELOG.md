@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.0]
+
+- Released @ 8/2024 (UTC)
+- breaking: Simplify code, change to open use license, update readme
+
 ## [0.2.0]
 
 - Released @ 8/2024 (UTC)
