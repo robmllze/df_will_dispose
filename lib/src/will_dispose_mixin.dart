@@ -151,7 +151,7 @@ final class NoDisposeMethodDebugError extends Error {
   @override
   String toString() {
     return 'NoDisposeMethodDebugError: The types $resourceTypes do not implement a dispose() method. '
-        "Either don't use willDispose() with this type, implement DisposeMixin, "
+        "Either don't use willDispose() with them, implement DisposeMixin, "
         'or use a valid type that has a dispose method.';
   }
 }

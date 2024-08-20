@@ -14,7 +14,7 @@ Dart & Flutter Packages by DevCetra.com & contributors.
 This package offers a lightweight approach to managing resource disposal in Flutter, providing an alternative to hooks. It's designed to simplify your code by marking resources for disposal upon definition. Additionally, if you prefer to avoid adding extra dependencies, the mixins used in this package are so short and simple that you can easily copy them directly into your project.
 
 - [View and copy the mixins here.](https://github.com/robmllze/df_will_dispose/blob/main/lib/src/will_dispose_mixin.dart)
-- [Or check out the even simpler vesion here.](https://github.com/robmllze/df_will_dispose/blob/main/copy_me/simple_will_dispose_mixin.dart)
+- [Or check out the even simpler vesion here.](https://github.com/robmllze/df_will_dispose/blob/main/copy_me/simpler_will_dispose_mixin.dart)
 
 ## Quickstart
 
