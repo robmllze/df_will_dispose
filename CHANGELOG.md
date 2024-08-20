@@ -4,6 +4,7 @@
 
 - Released @ 8/2024 (UTC)
 - breaking: Simplify code, change to open use license, update readme
+- docs: Update readme and license again
 
 ## [0.2.0]
 
