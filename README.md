@@ -1,4 +1,4 @@
-# DF WillDispose
+# DF Will Dispose
 
 <a href="https://www.buymeacoffee.com/robmllze" target="_blank"><img align="right" src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
@@ -11,7 +11,7 @@ Dart & Flutter Packages by DevCetra.com & contributors.
 
 ## Summary
 
-Theis package offers a lightweight approach to managing resource disposal in Flutter, providing an alternative to hooks. It's designed to simplify your code by marking resources for disposal upon definition. Additionally, if you prefer to avoid adding extra dependencies, the mixins used in this package are so short and simple that you can easily copy them directly into your project.
+This package offers a lightweight approach to managing resource disposal in Flutter, providing an alternative to hooks. It's designed to simplify your code by marking resources for disposal upon definition. Additionally, if you prefer to avoid adding extra dependencies, the mixins used in this package are so short and simple that you can easily copy them directly into your project.
 
 [View and copy the mixins here.](https://github.com/robmllze/df_will_dispose/blob/main/lib/src/will_dispose_mixin.dart)
 
