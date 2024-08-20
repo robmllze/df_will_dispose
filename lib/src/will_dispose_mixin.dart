@@ -113,7 +113,8 @@ mixin WillDisposeMixin on DisposeMixin {
             exceptions.whereType<NoDisposeMethodDebugError>().toList();
         if (disposeErrors.isNotEmpty) {
           throw NoDisposeMethodDebugError(
-              disposeErrors.map((e) => e.runtimeType).toList(),);
+            disposeErrors.map((e) => e.runtimeType).toList(),
+          );
         }
       }
       // Throw the first non-NoDisposeMethodDebugError exception if any exist.
