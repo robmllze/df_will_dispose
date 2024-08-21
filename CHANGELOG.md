@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.5.0]
+
+- Released @ 8/2024 (UTC)
+- breaking: Remove WillDisposeWidget, intruduce WillCancelMixin and methods that work with BuildContext
+
 ## [0.4.1]
 
 - Released @ 8/2024 (UTC)

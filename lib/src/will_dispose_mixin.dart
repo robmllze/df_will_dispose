@@ -111,7 +111,8 @@ mixin WillDisposeMixin on DisposeMixin {
       // Only throw NoDisposeMethodDebugError in debug mode. Ignore them in
       // release.
       if (kDebugMode) {
-        final disposeErrors = exceptions.whereType<NoDisposeMethodDebugError>().toList();
+        final disposeErrors =
+            exceptions.whereType<NoDisposeMethodDebugError>().toList();
         if (disposeErrors.isNotEmpty) {
           throw NoDisposeMethodDebugError(
             disposeErrors.map((e) => e.runtimeType).toList(),
@@ -119,7 +120,8 @@ mixin WillDisposeMixin on DisposeMixin {
         }
       }
       // Throw the first non-NoDisposeMethodDebugError exception if any exist.
-      final otherExceptions = exceptions.where((e) => e is! NoDisposeMethodDebugError).toList();
+      final otherExceptions =
+          exceptions.where((e) => e is! NoDisposeMethodDebugError).toList();
       if (otherExceptions.isNotEmpty) {
         throw otherExceptions.first;
       }

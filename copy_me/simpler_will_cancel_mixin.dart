@@ -9,7 +9,8 @@ mixin WillCancelMixin on CancelMixin {
 
   @nonVirtual
   T willCancel<T>(T resource) {
-    _resources.add(resource); // Add resource to the list for later cancellation.
+    _resources
+        .add(resource); // Add resource to the list for later cancellation.
     return resource;
   }
 
@@ -22,7 +23,8 @@ mixin WillCancelMixin on CancelMixin {
       } on NoSuchMethodError {
         assert(false, () {
           throw NoCancelMethodDebugError(
-              resource.runtimeType,); // Handle missing cancel method.
+            resource.runtimeType,
+          ); // Handle missing cancel method.
         });
       }
     }

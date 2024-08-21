@@ -15,7 +15,7 @@ import 'package:flutter/widgets.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class ContextStore  {
+class ContextStore {
   //
   //
   //
@@ -224,5 +224,6 @@ class ContextStore  {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef ContextStoreData<T> = ({T data, void Function(T data)? onDetach});
-typedef ContextStoreMap<T> = HashMap<BuildContext, Map<dynamic, ContextStoreData<T>>>;
+typedef ContextStoreMap<T>
+    = HashMap<BuildContext, Map<dynamic, ContextStoreData<T>>>;
 typedef ContextMap<T> = Map<dynamic, ContextStoreData<T>>;
