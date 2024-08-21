@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.5.1]
+
+- Released @ 8/2024 (UTC)
+- feat: Add AssociatedContextStore class for easier managment of ContextStore
+
 ## [0.5.0]
 
 - Released @ 8/2024 (UTC)
