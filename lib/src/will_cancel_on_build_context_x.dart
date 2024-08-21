@@ -10,7 +10,7 @@
 
 import 'package:flutter/widgets.dart';
 
-import '_context_store.dart';
+import 'context_store.dart';
 
 import '_index.g.dart';
 
@@ -28,8 +28,7 @@ extension WillCancelOnBuildContextX on BuildContext {
   T willCancel<T>(T resource, {VoidCallback? onBeforeCancel}) {
     final instance = _WillCancel();
     instance.willCancel(resource, onBeforeCancel: onBeforeCancel);
-    return ContextStore.instance.attach(
-      this,
+    return ContextStore.of(this).attach(
       resource,
       key: resource.hashCode,
       onDetach: (data) {

@@ -10,7 +10,7 @@
 
 import 'package:flutter/widgets.dart';
 
-import '_context_store.dart';
+import 'context_store.dart';
 
 import '_index.g.dart';
 
@@ -28,8 +28,7 @@ extension WillDisposeOnBuildContextX on BuildContext {
   T willDispose<T>(T resource, {VoidCallback? onBeforeDispose}) {
     final instance = _WillDispose();
     instance.willDispose(resource, onBeforeDispose: onBeforeDispose);
-    return ContextStore.instance.attach(
-      this,
+    return ContextStore.of(this).attach(
       resource,
       key: resource.hashCode,
       onDetach: (data) {

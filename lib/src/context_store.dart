@@ -15,6 +15,78 @@ import 'package:flutter/widgets.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
+/// Provides a way to [attach], [retrieve], and [detach] data tied to a specific
+/// [BuildContext] and key, ensuring effective management of context-bound state
+/// throughout the widget tree lifecycle.
+///
+/// ---
+///
+/// ### Example:
+///
+/// ```dart
+/// final store = ContextStore.of(context);
+/// store.attach<MyData>(myData);
+/// final data = store.get<MyData>();
+/// ```
+
+class AssociatedContextStore {
+  //
+  //
+  //
+
+  /// The `BuildContext` associated with the data.
+  final BuildContext context;
+
+  /// Creates a `ContextStore` instance associated with the provided [context].
+  const AssociatedContextStore.of(this.context);
+
+  /// Attaches data of type [T] to [context] with an optional [key]. If no key
+  /// is provided, the type [T] is used as the key.
+  ///
+  /// Optionally, an [onDetach] callback can be provided, which is called when
+  /// the data is detached from the store.
+  T attach<T>(
+    T data, {
+    dynamic key,
+    void Function(T data)? onDetach,
+  }) {
+    return ContextStore.instance.attach(
+      context,
+      data,
+      key: key,
+      onDetach: onDetach,
+    );
+  }
+
+  /// Retrieves data of type [T] associated with the [context]. If no key is
+  /// provided, the type [T] is used as the key.
+  ///
+  /// Returns the data if it exists, otherwise `null`.
+  T? retrieve<T>({
+    dynamic key,
+  }) {
+    return ContextStore.instance.retrieve<T>(
+      context,
+      key: key,
+    );
+  }
+
+  /// Detaches and removes data of type [T] associated with [context]. If no key
+  /// is provided, the type [T] is used as the key.
+  ///
+  /// Returns the removed data if or `null` if it didn't exist.
+  ContextStoreData<T>? detach<T>({
+    dynamic key,
+  }) {
+    return ContextStore.instance.detach<T>(
+      context,
+      key: key,
+    );
+  }
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
 class ContextStore {
   //
   //
@@ -28,6 +100,13 @@ class ContextStore {
 
   static final instance = ContextStore._();
   ContextStore._();
+
+  //
+  //
+  //
+
+  /// Creates a `ContextStore` instance associated with the provided [context].
+  static AssociatedContextStore of(BuildContext context) => AssociatedContextStore.of(context);
 
   //
   //
@@ -48,10 +127,8 @@ class ContextStore {
   }) {
     final keyOrType = key ?? T;
 
-    // Ensure the context entry exists in the map.
-    final contextDataMap = _store[context] ??= {};
-
     // Ensure the context entry exists in the map and check if it existed.
+    final contextDataMap = _store[context] ??= {};
     final didContextMapExist = contextDataMap.isNotEmpty;
 
     // Check if the data for the given key is already present.
@@ -97,7 +174,7 @@ class ContextStore {
   //
   //
 
-  T? get<T>(
+  T? retrieve<T>(
     BuildContext context, {
     dynamic key,
   }) {
@@ -216,14 +293,12 @@ class ContextStore {
   //
 
   bool _isContextValid(BuildContext context) {
-    final element = context as Element;
-    return element.mounted;
+    return context.mounted;
   }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef ContextStoreData<T> = ({T data, void Function(T data)? onDetach});
-typedef ContextStoreMap<T>
-    = HashMap<BuildContext, Map<dynamic, ContextStoreData<T>>>;
+typedef ContextStoreMap<T> = HashMap<BuildContext, Map<dynamic, ContextStoreData<T>>>;
 typedef ContextMap<T> = Map<dynamic, ContextStoreData<T>>;

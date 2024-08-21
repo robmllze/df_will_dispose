@@ -10,12 +10,12 @@
 // --- PUBLIC FILES ---
 export 'will_cancel_on_build_context_x.dart';
 export 'will_dispose_on_build_context_x.dart';
+export 'context_store.dart';
 export 'will_dispose_mixin.dart';
 export 'will_cancel_mixin.dart';
 export 'will_dispose_state.dart';
 
 // --- PRIVATE FILES (EXCLUDED) ---
-// export '_context_store.dart';
 // export '_index.g.dart';
 
 // --- GENERATED FILES (EXCLUDED) ---
