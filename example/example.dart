@@ -23,16 +23,14 @@ import 'package:df_will_dispose/df_will_dispose.dart';
 //
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class TimerWithCounterExample extends StatefulWidget {
-  const TimerWithCounterExample({super.key});
+class Counter extends StatefulWidget {
+  const Counter({super.key});
 
   @override
-  _TimerWithCounterExampleState createState() =>
-      _TimerWithCounterExampleState();
+  _CounterState createState() => _CounterState();
 }
 
-class _TimerWithCounterExampleState
-    extends WillDisposeState<TimerWithCounterExample> {
+class _CounterState extends WillDisposeState<Counter> {
   // Define resources and schedule them to be disposed when this widget ia
   // removed from the widget tree.
   late final _secondsRemaining = willDispose(ValueNotifier<int>(60));
@@ -94,15 +92,15 @@ class _TimerWithCounterExampleState
 //
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class ChatBoxExample extends WillDisposeWidget {
-  const ChatBoxExample({super.key});
+class ChatBox extends StatelessWidget {
+  const ChatBox({super.key});
 
   @override
-  Widget build(BuildContext context, WillDispose willDispose) {
-    // Define resources and schedule them to be disposed when this widget ia
+  Widget build(BuildContext context) {
+    // Define resources and schedule them to be disposed when this widget is
     // removed from the widget tree.
-    final textEditingController = willDispose(TextEditingController());
-    final focusNode = willDispose(FocusNode());
+    final textEditingController = context.willDispose(TextEditingController());
+    final focusNode = context.willDispose(FocusNode());
 
     return Row(
       children: [
@@ -132,27 +130,16 @@ class ChatBoxExample extends WillDisposeWidget {
 //
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class FormExample extends WillDisposeWidget {
-  const FormExample({super.key});
-
-  /// Override this method if you need to customize the disposal behavior.
-  @override
-  void onDispose(WillDispose willDispose) {
-    if (kDebugMode) {
-      print(
-        '${willDispose.resources.length} resources are about to be disposed!',
-      );
-    }
-    willDispose.dispose();
-  }
+class Form extends StatelessWidget {
+  const Form({super.key});
 
   @override
-  Widget build(BuildContext context, WillDispose willDispose) {
-    // Define resources and schedule them to be disposed when this widget ia
+  Widget build(BuildContext context) {
+    // Define resources and schedule them to be disposed when this widget is
     // removed from the widget tree.
-    final textEditingController = willDispose(TextEditingController());
-    final scrollController = willDispose(ScrollController());
-    final focusNode = willDispose(FocusNode());
+    final textEditingController = context.willDispose(TextEditingController());
+    final scrollController = context.willDispose(ScrollController());
+    final focusNode = context.willDispose(FocusNode());
 
     return SingleChildScrollView(
       controller: scrollController,
