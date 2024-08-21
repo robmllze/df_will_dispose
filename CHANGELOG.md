@@ -4,6 +4,7 @@
 
 - Released @ 8/2024 (UTC)
 - breaking: Remove WillDisposeWidget, intruduce WillCancelMixin and methods that work with BuildContext
+- feat: Add AssociatedContextStore class for easier managment of ContextStore
 
 ## [0.4.1]
 
