@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.5.2]
+
+- Released @ 8/2024 (UTC)
+- chore: Minor performance improvement on ContextStore mechanism
+
 ## [0.5.1]
 
 - Released @ 8/2024 (UTC)
