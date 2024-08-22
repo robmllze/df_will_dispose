@@ -4,6 +4,7 @@
 
 - Released @ 8/2024 (UTC)
 - chore: Minor performance improvement on ContextStore mechanism
+- chore: Add test for ContextStore
 
 ## [0.5.1]
 
