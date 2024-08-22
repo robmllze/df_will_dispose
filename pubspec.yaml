@@ -10,7 +10,7 @@
 
 name: df_will_dispose
 description: A lightweight solution for managing the cancellation and disposal of resources in Flutter.
-version: 0.5.1
+version: 0.5.2
 repository: https://github.com/robmllze/df_will_dispose
 funding:
   - https://www.buymeacoffee.com/robmllze

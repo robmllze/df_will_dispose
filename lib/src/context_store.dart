@@ -38,7 +38,7 @@ class AssociatedContextStore {
   final BuildContext context;
 
   /// Creates a `ContextStore` instance associated with the provided [context].
-  const AssociatedContextStore.of(this.context);
+  const AssociatedContextStore(this.context);
 
   /// Attaches data of type [T] to [context] with an optional [key]. If no key
   /// is provided, the type [T] is used as the key.
@@ -106,8 +106,7 @@ class ContextStore {
   //
 
   /// Creates a `ContextStore` instance associated with the provided [context].
-  static AssociatedContextStore of(BuildContext context) =>
-      AssociatedContextStore.of(context);
+  static AssociatedContextStore of(BuildContext context) => AssociatedContextStore(context);
 
   //
   //
@@ -129,18 +128,14 @@ class ContextStore {
     final keyOrType = key ?? T;
 
     // Ensure the context entry exists in the map and check if it existed.
-    final contextDataMap = _store[context] ??= {};
+    final contextDataMap = _store[context] ??= HashMap();
     final didContextMapExist = contextDataMap.isNotEmpty;
 
     // Check if the data for the given key is already present.
     if (contextDataMap.containsKey(keyOrType)) {
-      if (verbose) {
-        if (kDebugMode) {
-          print(
-            '[ContextStore] Data for key hask ${_keyHash(context, keyOrType)} is already attached.',
-          );
-        }
-      }
+      _log(
+        'Data for key hask ${_keyHash(context, keyOrType)} is already attached.',
+      );
     } else {
       // Schedule a context check if it's not already being checked.
       if (!didContextMapExist) {
@@ -149,22 +144,16 @@ class ContextStore {
           data: data,
           onDetach: onDetach != null ? (e) => onDetach(e as T) : null,
         );
-
         _scheduleContextCheck(context);
-
-        if (verbose) {
-          if (kDebugMode) {
-            print(
-              '[ContextStore] Attached context data associated with hash ${_keyHash(context, keyOrType)}',
-            );
-            print(
-              '[ContextStore] Context data map length: ${contextDataMap.length}',
-            );
-            print(
-              '[ContextStore] Store map length: ${_store.length}',
-            );
-          }
-        }
+        _log(
+          'Attached context data associated with hash ${_keyHash(context, keyOrType)}',
+        );
+        _log(
+          'Context data map length: ${contextDataMap.length}',
+        );
+        _log(
+          'Store map length: ${_store.length}',
+        );
       }
     }
 
@@ -233,20 +222,15 @@ class ContextStore {
 
     // Trigger the onDetach listener if it exists.
     storeData.onDetach?.call(storeData.data);
-
-    if (verbose) {
-      if (kDebugMode) {
-        print(
-          '[ContextStore] Detached context data associated with ${_keyHash(context, keyOrType)}',
-        );
-        print(
-          '[ContextStore] Context data map length: ${contextDataMap!.length}',
-        );
-        print(
-          '[ContextStore] Store map length: ${_store.length}',
-        );
-      }
-    }
+    _log(
+      'Detached context data associated with ${_keyHash(context, keyOrType)}',
+    );
+    _log(
+      'Context data map length: ${contextDataMap!.length}',
+    );
+    _log(
+      'Store map length: ${_store.length}',
+    );
 
     // Return the data that was removed.
     return storeData;
@@ -273,34 +257,38 @@ class ContextStore {
   //
 
   void _scheduleContextCheck(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_store.containsKey(context)) {
-        if (!_isContextValid(context)) {
-          final contextDataMap = _store[context];
-          if (contextDataMap != null) {
-            for (final key in List.of(contextDataMap.keys)) {
-              detach<dynamic>(context, key: key);
-            }
-          }
-        } else {
-          _scheduleContextCheck(context);
+    _widgetsBinding ??= WidgetsBinding.instance;
+    _widgetsBinding!.addPostFrameCallback((_) {
+      //_log('Post frame!');
+      final contextDataMap = _store[context];
+      if (contextDataMap == null) return;
+      if (!context.mounted) {
+        for (final key in List.of(contextDataMap.keys)) {
+          detach<dynamic>(context, key: key);
         }
+      } else {
+        _scheduleContextCheck(context);
       }
     });
   }
 
+  WidgetsBinding? _widgetsBinding;
+
   //
   //
   //
 
-  bool _isContextValid(BuildContext context) {
-    return context.mounted;
+  void _log(String message) {
+    if (verbose) {
+      if (kDebugMode) {
+        print('[ContextStore] $message');
+      }
+    }
   }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef ContextStoreData<T> = ({T data, void Function(T data)? onDetach});
-typedef ContextStoreMap<T>
-    = HashMap<BuildContext, Map<dynamic, ContextStoreData<T>>>;
-typedef ContextMap<T> = Map<dynamic, ContextStoreData<T>>;
+typedef ContextStoreMap<T> = HashMap<BuildContext, HashMap<dynamic, ContextStoreData<T>>>;
+typedef ContextMap<T> = HashMap<dynamic, ContextStoreData<T>>;
