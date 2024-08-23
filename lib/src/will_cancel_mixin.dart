@@ -1,9 +1,11 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
-// source code is governed by an an MIT-style license that can be found in the
-// LICENSE file located in this project's root directory.
+// Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
+// source code is governed by an MIT-style license described in the LICENSE
+// file located in this project's root directory.
+//
+// See: https://opensource.org/license/mit
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
@@ -111,8 +113,7 @@ mixin WillCancelMixin on CancelMixin {
       // Only throw NoCancelMethodDebugError in debug mode. Ignore them in
       // release.
       if (kDebugMode) {
-        final cancelErrors =
-            exceptions.whereType<NoCancelMethodDebugError>().toList();
+        final cancelErrors = exceptions.whereType<NoCancelMethodDebugError>().toList();
         if (cancelErrors.isNotEmpty) {
           throw NoCancelMethodDebugError(
             cancelErrors.map((e) => e.runtimeType).toList(),
@@ -120,8 +121,7 @@ mixin WillCancelMixin on CancelMixin {
         }
       }
       // Throw the first non-NoCancelMethodDebugError exception if any exist.
-      final otherExceptions =
-          exceptions.where((e) => e is! NoCancelMethodDebugError).toList();
+      final otherExceptions = exceptions.where((e) => e is! NoCancelMethodDebugError).toList();
       if (otherExceptions.isNotEmpty) {
         throw otherExceptions.first;
       }

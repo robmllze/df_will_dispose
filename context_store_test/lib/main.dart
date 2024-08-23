@@ -5,7 +5,7 @@ import 'pages/_index.g.dart';
 import 'test_animation.dart';
 
 void main() {
-  ContextStore.instance.verbose = true;
+  //ContextStore.instance.verbose = true;
   runApp(const App());
 }
 
@@ -41,8 +41,7 @@ class _AppState extends State<App> {
             ),
             OutlinedButton(
               onPressed: () {
-                final nextPageIndex =
-                    ((pageController.page?.toInt() ?? 0) + 1) % pages.length;
+                final nextPageIndex = ((pageController.page?.toInt() ?? 0) + 1) % pages.length;
                 pageController.jumpToPage(nextPageIndex);
               },
               child: const Padding(

@@ -1,13 +1,14 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
-// source code is governed by an an MIT-style license that can be found in the
-// LICENSE file located in this project's root directory.
+// Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
+// source code is governed by an MIT-style license described in the LICENSE
+// file located in this project's root directory.
+//
+// See: https://opensource.org/license/mit
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
-
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart' show kDebugMode;
@@ -93,6 +94,7 @@ class ContextStore {
   //
 
   bool verbose = false;
+  Duration contextCheckDelay = const Duration(seconds: 1);
 
   //
   //
@@ -106,8 +108,7 @@ class ContextStore {
   //
 
   /// Creates a `ContextStore` instance associated with the provided [context].
-  static AssociatedContextStore of(BuildContext context) =>
-      AssociatedContextStore(context);
+  static AssociatedContextStore of(BuildContext context) => AssociatedContextStore(context);
 
   //
   //
@@ -260,15 +261,22 @@ class ContextStore {
   void _scheduleContextCheck(BuildContext context) {
     _widgetsBinding ??= WidgetsBinding.instance;
     _widgetsBinding!.addPostFrameCallback((_) {
-      //_log('Post frame!');
+      _log('Post frame!');
       final contextDataMap = _store[context];
       if (contextDataMap == null) return;
       if (!context.mounted) {
         for (final key in List.of(contextDataMap.keys)) {
+          _log('Detaching $key from context ${context.hashCode}');
           detach<dynamic>(context, key: key);
         }
       } else {
-        _scheduleContextCheck(context);
+        // If the context is still mounted, schedule another check after
+        // autoDetachDelay.
+        Future.delayed(contextCheckDelay, () {
+          _log('Scheduling another context check...');
+          // ignore: use_build_context_synchronously
+          _scheduleContextCheck(context);
+        });
       }
     });
   }
@@ -291,6 +299,5 @@ class ContextStore {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef ContextStoreData<T> = ({T data, void Function(T data)? onDetach});
-typedef ContextStoreMap<T>
-    = HashMap<BuildContext, HashMap<dynamic, ContextStoreData<T>>>;
+typedef ContextStoreMap<T> = HashMap<BuildContext, HashMap<dynamic, ContextStoreData<T>>>;
 typedef ContextMap<T> = HashMap<dynamic, ContextStoreData<T>>;

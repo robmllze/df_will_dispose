@@ -8,6 +8,7 @@ class Page1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.willDispose(ValueNotifier(1));
+
     return Container(
       color: Colors.blue.shade200,
       width: double.infinity,
