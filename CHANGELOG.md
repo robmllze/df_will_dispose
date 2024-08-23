@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.5.3]
+
+- Released @ 8/2024 (UTC)
+- refactor: Update ContextStore to implement contextCheckDelay for throttling
+
 ## [0.5.2]
 
 - Released @ 8/2024 (UTC)
